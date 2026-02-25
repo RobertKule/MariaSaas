@@ -1,66 +1,74 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useCurrency } from '@renderer/hooks/useCurrently';
-import { AppDispatch } from '@renderer/app/store/store';
-import { fetchDailyRate } from '@renderer/app/store/slice/sessionSlice';
+import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useCurrency } from '@renderer/hooks/useCurrently'
+import { AppDispatch } from '@renderer/app/store/store'
+import { fetchDailyRate } from '@renderer/app/store/slice/sessionSlice'
 
 // Composants
-import { StatCard } from './StatCard';
-import { SalesChart } from './SalesCharts';
-import { AlertsPanel } from './AlertsPanel';
-import { VolumeChart } from './VolumeChart';
-import { AIBanner } from './AIBanner';
-import { RateWidget } from './RateWidget';
+import { StatCard } from './StatCard'
+import { SalesChart } from './SalesCharts'
+import { AlertsPanel } from './AlertsPanel'
+import { VolumeChart } from './VolumeChart'
+import { AIBanner } from './AIBanner'
+import { RateWidget } from './RateWidget'
 
 interface DashboardStats {
-  revenueToday: number;
-  salesCount: number;
-  lowStockCount: number;
-  stockValue: number;
-  recentSales: { date: string; totalAmount: number }[];
+  revenueToday: number
+  salesCount: number
+  lowStockCount: number
+  stockValue: number
+  recentSales: { date: string; totalAmount: number }[]
 }
 
 const Dashboard: React.FC = () => {
-  const { formatPrice } = useCurrency();
-  const [data, setData] = useState<DashboardStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const dispatch = useDispatch<AppDispatch>();
+  const { formatPrice } = useCurrency()
+  const [data, setData] = useState<DashboardStats | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    dispatch(fetchDailyRate());
+    dispatch(fetchDailyRate())
     const loadStats = async () => {
       try {
-        const res = await window.api.stats.getDashboard();
-        if (res.success && res.data) setData(res.data);
+        const res = await window.api.stats.getDashboard()
+        if (res.success && res.data) setData(res.data)
       } catch (err) {
-        console.error(err);
+        console.error(err)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
-    loadStats();
-  }, [dispatch]);
+    }
+    loadStats()
+  }, [dispatch])
 
-  if (isLoading) return (
-    <div className="h-full w-full flex items-center justify-center bg-slate-50/50 dark:bg-transparent">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
-        <p className="text-xs font-black uppercase tracking-widest text-slate-400 animate-pulse">Analyse des flux en cours...</p>
+  if (isLoading)
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-slate-50/50 dark:bg-transparent">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+          <p className="text-xs font-black uppercase tracking-widest text-slate-400 animate-pulse">
+            Analyse des flux en cours...
+          </p>
+        </div>
       </div>
-    </div>
-  );
+    )
 
-  const stats = data || { revenueToday: 0, salesCount: 0, lowStockCount: 0, stockValue: 0, recentSales: [] };
-  const chartData = stats.recentSales.map(s => ({
+  const stats = data || {
+    revenueToday: 0,
+    salesCount: 0,
+    lowStockCount: 0,
+    stockValue: 0,
+    recentSales: []
+  }
+  const chartData = stats.recentSales.map((s) => ({
     name: new Date(s.date).toLocaleDateString(undefined, { weekday: 'short' }),
     sales: s.totalAmount
-  }));
+  }))
 
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-10">
       {/* 1. TOP BAR : Title & Exchange Rate */}
       <div className="relative overflow-hidden flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-8 rounded-[2.5rem] border border-slate-200/50 dark:border-slate-800/50 shadow-xl shadow-slate-200/40 dark:shadow-black/20 group">
-
         {/* Decorative ambient background */}
         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-700"></div>
 
@@ -68,8 +76,19 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center gap-5">
             {/* Logo / Brand Icon */}
             <div className="relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl shadow-lg shadow-emerald-500/30 transform group-hover:scale-105 transition-transform duration-500">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <svg
+                className="w-7 h-7 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
               </svg>
               <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
@@ -84,7 +103,9 @@ const Dashboard: React.FC = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                 </div>
-                <p className="text-slate-500 dark:text-slate-400 font-bold text-[11px] uppercase tracking-[0.25em]">Système de Monitoring v1.0</p>
+                <p className="text-slate-500 dark:text-slate-400 font-bold text-[11px] uppercase tracking-[0.25em]">
+                  Système de Monitoring v1.0
+                </p>
               </div>
             </div>
           </div>
@@ -144,11 +165,11 @@ const Dashboard: React.FC = () => {
 
         {/* Placeholder pour une future section : Top Produits vendus */}
         <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center italic text-slate-400 text-sm">
-          Module "Top Performances Produits" en cours d'apprentissage...
+          Module &quot;Top Performances Produits&quot; en cours d&apos;apprentissage...
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard
