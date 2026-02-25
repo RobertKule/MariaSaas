@@ -50,3 +50,29 @@ export interface CashJournalEntry {
     performedBy: string;
     isManual: boolean;
 }
+
+export interface Client {
+    id: string;
+    code: string;
+    name: string;
+    phone?: string | null;
+    email?: string | null;
+    address?: string | null;
+    insuranceProvider?: string | null;
+    insuranceNumber?: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface CreateClientInput {
+    name: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    insuranceProvider?: string;
+    insuranceNumber?: string;
+}
+
+export interface UpdateClientInput extends Partial<CreateClientInput> {
+    id: string;
+}

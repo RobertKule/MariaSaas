@@ -1,106 +1,85 @@
-```markdown
-# MariaSaaS - Pharmacy Management System
+# 🏥 MariaSaaS - Open Source Pharmacy Management System
 
-Bienvenue dans le code source de **MariaSaaS**.
-Ce projet est une application Desktop moderne, sécurisée et "Offline-First" pour la gestion de pharmacie.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+
+**MariaSaaS** est une solution de gestion de pharmacie de pointe, conçue pour être **moderne**, **sécurisée** et **Offline-First**. 
+
+L'objectif de ce projet est de démocratiser l'accès à des outils de gestion pharmaceutique professionnels pour les officines indépendantes, particulièrement dans les zones à connectivité limitée, tout en respectant les standards internationaux (GxP).
+
+## ✨ Vision & Impact
+Dans de nombreuses régions, les pharmacies luttent avec des systèmes obsolètes ou coûteux. MariaSaaS offre :
+- 🔒 **Souveraineté des données** : Stockage local via SQLite/Prisma.
+- ⚡ **Performance native** : Application desktop via Electron + Vite.
+- 💰 **Flexibilité financière** : Gestion multi-devises (USD/CDF) avec taux de change dynamique.
+- 🤖 **Intelligence** : Monitoring des stocks critiques et aide à la décision.
+
+---
 
 ## 🏗 Architecture Technique
 
-L'application suit une architecture stricte pour garantir maintenabilité et sécurité.
+Le projet utilise une architecture **Vertical Slice** stricte pour une scalabilité maximale.
 
-### Stack
-- **Framework :** Electron + Vite (Build optimisé)
-- **Frontend :** React 18 + TypeScript + TailwindCSS
-- **State :** Redux Toolkit (Gestion d'état global + Thunks)
-- **Backend (Local) :** Node.js (Main Process) + Prisma ORM + SQLite
-- **Validation :** Zod (Schémas partagés Front/Back)
-
-### Structure des Dossiers (`src/`)
-
-| Dossier | Rôle | Règles d'Or |
+| Couche | Technologie | Rôle |
 | :--- | :--- | :--- |
-| **`shared/`** | Types & Schémas Zod communs | **INTERDIT** d'importer du code Node (fs, prisma) ou React ici. C'est du pur JS/TS universel. |
-| **`main/`** | Backend Node.js (Electron Main) | Contient `services/` (Logique métier), `ipc/` (Routes API), `lib/` (Prisma). Accès BDD autorisé. |
-| **`renderer/`** | Frontend React (Electron Renderer) | Contient l'UI (`components`, `pages`, `features`). **INTERDIT** d'utiliser `fs`, `prisma` ou `ipcRenderer` directement. Passez par `window.api`. |
-| **`preload/`** | Pont de Sécurité (ContextBridge) | Expose uniquement les méthodes sécurisées du Main vers le Renderer. |
+| **Frontend** | React 18 + TailwindCSS | Interface utilisateur réactive et typée. |
+| **State** | Redux Toolkit | Source unique de vérité (Auth, Stock, Session). |
+| **Backend** | Node.js (Main Process) | Logique métier, sécurité et accès disque. |
+| **Persistance**| Prisma + SQLite | ORM moderne pour une base de données locale robuste. |
+| **Validation** | Zod | Schémas de données partagés (zéro duplication). |
 
 ---
 
 ## 🚀 Démarrage Rapide
 
 ### Pré-requis
-- **Node.js :** Version 20 LTS ou 22 (Obligatoire). Utilisez `nvm`.
-- **OS :** Windows 10/11, macOS ou Linux (Ubuntu 22/24).
+- **Node.js :** v20+ ou v22+ (LTS recommandé).
+- **OS :** Windows, macOS ou Linux.
 
 ### Installation
 
-1.  **Cloner et installer :**
+1.  **Cloner le projet :**
     ```bash
-    git clone <repo>
+    git clone https://github.com/votre-username/MariaSaaS.git
     cd MariaSaaS
     npm install
     ```
 
-2.  **Préparer la Base de Données :**
+2.  **Initialiser la base de données locale :**
     ```bash
-    # Crée le fichier .env si inexistant (DATABASE_URL="file:./dev.db")
-    # Lance les migrations et génère le client Prisma
-    npx prisma migrate dev --name init
+    # Créez un fichier .env à la racine : DATABASE_URL="file:./dev.db"
+    npx prisma db push
     ```
 
-3.  **Lancer en Développement :**
+3.  **Lancer en mode développement :**
     ```bash
     npm run dev
     ```
-    *Le premier lancement va automatiquement créer un compte SuperAdmin (`admin@mariasaas.com` / `admin123`).*
 
 ---
 
-## 🛠 Guide du Développeur
+## 🤝 Contribuer
 
-### 1. Comment ajouter une nouvelle fonctionnalité ? (Workflow "Vertical Slice")
+Nous adorons les contributions ! Que ce soit pour corriger un bug, ajouter une fonctionnalité ou améliorer la documentation.
 
-Ne touchez pas à tout. Suivez ce flux pour ajouter une feature (ex: Gestion des Clients) :
-
-1.  **DB :** Modifiez `prisma/schema.prisma` et lancez `npx prisma migrate dev`.
-2.  **Shared :** Créez `src/shared/schemas/clientSchema.ts` (Validation Zod).
-3.  **Backend (Service) :** Créez `src/main/services/clientService.ts`. Implémentez la logique métier.
-4.  **Backend (IPC) :** Créez `src/main/ipc/client.ts`. Utilisez `procedure.input(schema)` pour sécuriser la route.
-5.  **Pont :** Ajoutez la méthode dans `src/preload/index.ts` et son type dans `index.d.ts`.
-6.  **Frontend (Redux) :** Créez `src/renderer/src/app/store/slice/clientSlice.ts` avec `createAsyncThunk`.
-7.  **Frontend (UI) :** Créez vos composants React connectés au Slice.
-
-### 2. Gestion de la Base de Données
-
-- **Voir les données (GUI) :**
-  ```bash
-  npx prisma studio
-  ```
-- **Reset complet (Attention !) :** Supprimez `prisma/dev.db` et relancez `npm run dev`.
-
-### 3. Résolution de Problèmes Courants
-
-- **Erreur `PrismaClient...` ou `Unknown property` :**
-  C'est un problème de build Electron. Vérifiez que `src/main/lib/prisma.ts` force bien le chemin via `process.env.DATABASE_URL`.
-
-- **Écran blanc au démarrage :**
-  Ouvrez la console développeur (`Ctrl + Shift + I`). Si erreur `require is not defined`, vérifiez que vous n'avez pas d'import CommonJS dans le code React.
-
-- **Crash silencieux sous Linux :**
-  Probablement un souci Wayland/GPU. Lancez avec `npm run dev` (le code `index.ts` gère désormais les flags `--no-sandbox` automatiquement).
+### Workflow de développement
+1. Consultez les **Issues** pour trouver une tâche.
+2. Suivez le **Guide du Développeur** dans le wiki pour comprendre le pattern IPC/Redux.
+3. Créez une branche (`feature/incroyable-option`).
+4. Soumettez une Pull Request (PR).
 
 ---
 
-## 📦 Build & Production
+## 🛠 Roadmap & Prochaines étapes
+- [ ] Module Point de Vente (POS) complet.
+- [ ] Impression de tickets de caisse (Thermique/ESC-POS).
+- [ ] Exportation des rapports en PDF et Excel.
+- [ ] Synchronisation optionnelle avec un Cloud (MCP Architecture).
 
-Pour générer l'installateur (`.exe`, `.deb`, `.dmg`) :
+---
 
-```bash
-npm run build
-# ou pour une plateforme spécifique
-npm run build:win
-npm run build:linux
-```
+## 📄 Licence
+Ce projet est sous licence **MIT**. Vous êtes libre de l'utiliser, de le modifier et de le distribuer.
 
-L'exécutable sera dans le dossier `dist/`.
-```
+---
+*Développé pour l'accès aux soins de santé.*

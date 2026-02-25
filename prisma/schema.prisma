@@ -8,8 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 // --- UTILISATEURS ---
 model User {
   id        String    @id @default(uuid())
@@ -116,12 +114,19 @@ model RequisitionItem {
 
 // --- CRM ---
 model Client {
-  id                String  @id @default(uuid())
-  code              String  @unique
-  name              String
-  phone             String?
-  email             String?
-  address           String?
+  id      String  @id @default(uuid())
+  code    String  @unique // ex: PAT-001
+  name    String
+  phone   String?
+  email   String?
+  address String?
+
+  // Nouveaux champs pour la gestion pro
+  creditLimit    Float  @default(0)
+  currentCredit  Float  @default(0)
+  loyaltyStatus  String @default("NONE") // NONE, BRONZE, SILVER, GOLD
+  totalPurchases Int    @default(0)
+
   insuranceProvider String?
   insuranceNumber   String?
 
