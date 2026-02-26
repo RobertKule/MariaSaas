@@ -45,8 +45,9 @@ const PharmacyAI: React.FC = () => {
             */
 
       // console.log(sessionRef.current); // Pour éviter l'erreur de variable inutilisée
-    } catch (err) {
-      console.error(err)
+    } catch (err: unknown) {
+      const error = err as Error
+      console.error(error.message || "Erreur lors de l'initialisation de l'assistant IA")
       setIsConnecting(false)
     }
   }

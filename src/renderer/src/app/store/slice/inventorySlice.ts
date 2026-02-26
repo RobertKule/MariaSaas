@@ -79,7 +79,7 @@ export const fetchProducts = createAsyncThunk<Product[], void>(
       const response = await window.api.inventory.getProducts()
       if (!response.success) throw new Error(response.error?.message || 'Erreur inconnue')
       return response.data as Product[]
-    } catch (err) {
+    } catch (err: unknown) {
       const error = err as Error
       return rejectWithValue(error.message || 'Erreur lors du chargement des produits')
     }
@@ -94,7 +94,7 @@ export const createProduct = createAsyncThunk<Product, ProductInput>(
       const response = await window.api.inventory.createProduct(data)
       if (!response.success) throw new Error(response.error?.message || 'Erreur création')
       return response.data as Product
-    } catch (err) {
+    } catch (err: unknown) {
       const error = err as Error
       return rejectWithValue(error.message || 'Erreur lors de la création du produit')
     }
@@ -113,7 +113,7 @@ export const deleteProduct = createAsyncThunk<string, string>(
       // if (!response.success) throw new Error(response.error?.message);
       // return id;
       throw new Error("Suppression non implémentée backend pour l'instant")
-    } catch (err) {
+    } catch (err: unknown) {
       const error = err as Error
       return rejectWithValue(error.message || 'Erreur lors de la suppression du produit')
     }
@@ -128,7 +128,7 @@ export const createDraftRequisition = createAsyncThunk<Requisition, CreateRequis
       const response = await window.api.inventory.createDraft(data)
       if (!response.success) throw new Error(response.error?.message || 'Erreur création bon')
       return response.data as Requisition
-    } catch (err) {
+    } catch (err: unknown) {
       const error = err as Error
       return rejectWithValue(
         error.message || 'Erreur lors de la création du brouillon de réquisition'
@@ -144,7 +144,7 @@ export const validateRequisition = createAsyncThunk<Requisition, string>(
       const response = await window.api.inventory.validateRequisition(id)
       if (!response.success) throw new Error(response.error?.message || 'Erreur validation')
       return response.data as Requisition
-    } catch (err) {
+    } catch (err: unknown) {
       const error = err as Error
       return rejectWithValue(error.message || 'Erreur lors de la validation du bon')
     }

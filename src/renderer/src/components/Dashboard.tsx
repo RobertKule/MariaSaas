@@ -17,7 +17,7 @@ interface DashboardStats {
   salesCount: number
   lowStockCount: number
   stockValue: number
-  recentSales: { date: string; totalAmount: number }[]
+  recentSales: { createdAt: string | Date; totalAmount: number }[]
 }
 
 const Dashboard: React.FC = () => {
@@ -32,8 +32,9 @@ const Dashboard: React.FC = () => {
       try {
         const res = await window.api.stats.getDashboard()
         if (res.success && res.data) setData(res.data)
-      } catch (err) {
-        console.error(err)
+      } catch (err: unknown) {
+        const error = err as Error
+        console.error(error.message || 'Erreur lors du chargement des statistiques')
       } finally {
         setIsLoading(false)
       }
@@ -60,8 +61,9 @@ const Dashboard: React.FC = () => {
     stockValue: 0,
     recentSales: []
   }
+
   const chartData = stats.recentSales.map((s) => ({
-    name: new Date(s.date).toLocaleDateString(undefined, { weekday: 'short' }),
+    name: new Date(s.createdAt).toLocaleDateString(undefined, { weekday: 'short' }),
     sales: s.totalAmount
   }))
 
