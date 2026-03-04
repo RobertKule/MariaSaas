@@ -23,7 +23,7 @@ export const StatCard: React.FC<Props> = ({ title, value, change, color, icon })
           className={`p-3 rounded-2xl ${themes[color]} transition-transform group-hover:scale-110`}
         >
           <svg
-            className="opacity-100 hover:opacity-50 transition-opacity duration-300"
+            className="opacity-100 transition-opacity duration-300"
             width="20"
             height="20"
             fill="none"
