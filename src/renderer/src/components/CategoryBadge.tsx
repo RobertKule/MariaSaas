@@ -33,7 +33,7 @@ const CategoryBadge: React.FC<CategoryBadgeProps> = ({ category, isActive }) => 
   return (
     <span
       className={`
-        flex-none px-4 py-2 my-2 rounded-xl
+        flex-none px-6 py-4 mb-2  rounded-xl
         text-[8px] font-black uppercase tracking-widest
         transition-all border
         ${isActive ? colorClass : 'border-slate-600 text-slate-400 bg-white dark:bg-slate-900'}

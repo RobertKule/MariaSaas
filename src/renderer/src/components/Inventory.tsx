@@ -202,7 +202,7 @@ const Inventory: React.FC = () => {
 
         {/* Catégories */}
 
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        <div className="flex gap-4 p-2">
           {CATEGORIES.map((cat) => (
             <button key={cat} onClick={() => setSelectedCategory(cat)}>
               <CategoryBadge category={cat} isActive={selectedCategory === cat} />
